@@ -7,7 +7,7 @@ const NavBar = () => {
   const navItems = ["Marketplace", "Services", "Transactions", "Wallet"];
 
   return (
-    <nav className="w-full flex md:justify-center justify-between items-center p-4">
+    <nav className="w-full flex justify-between md:px-28 2xl:px-[10%] items-center p-4">
       <div className="md:flex-[0.5] flex-initial justify-between lg:justify-center  items-center">
         <img
           src={logo}
@@ -28,7 +28,7 @@ const NavBar = () => {
           Login
         </li>
       </ul>
-      <div className="flex relative text-white">
+      <div className="flex md:hidden relative text-white">
         {isOpen ? (
           <MdOutlineClose
             fontSize={28}
