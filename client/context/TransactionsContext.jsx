@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { BrowserProvider, ethers } from "ethers";
+import { ethers } from "ethers";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../utils/constants";
 
 import { useEffect, useState, createContext } from "react";
