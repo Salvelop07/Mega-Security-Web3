@@ -5,18 +5,34 @@ import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../utils/constants";
 import { useEffect, useState, createContext } from "react";
 
 export const TransactionContext = createContext();
-
 const { ethereum } = window;
 
 const createEthereumContract = async () => {
-  const provider = new BrowserProvider(ethereum);
-  const signer = await  provider.getSigner();
-  const transactionContract = new ethers.Contract(
-    CONTRACT_ADDRESS,
-    CONTRACT_ABI,
-    signer
-  );
-  console.log({ provider, signer, transactionContract });
+  if (!ethereum) {
+    console.error("MetaMask is not installed!");
+    return;
+  }
+
+  try {
+    // Request account access from MetaMask
+    const provider = new ethers.BrowserProvider(ethereum);
+    await provider.send("eth_requestAccounts", []);
+
+    // Get the signer (active account)
+    const signer = await provider.getSigner();
+
+    // Initialize the contract instance
+    const transactionContract = new ethers.Contract(
+      CONTRACT_ADDRESS, // replace with your actual contract address
+      CONTRACT_ABI, // replace with your actual contract ABI
+      signer
+    );
+
+    console.log({ provider, signer, transactionContract });
+    // return transactionContract; // Optional: Return contract instance if you need it outside the function
+  } catch (error) {
+    console.error("Error creating Ethereum contract:", error);
+  }
 };
 
 export const TransactionsProvider = ({ children }) => {
@@ -27,7 +43,7 @@ export const TransactionsProvider = ({ children }) => {
     keyword: "",
     message: "",
   });
-console.log(formData)
+  console.log(formData);
   const handleChange = (e, name) => {
     const { value } = e.target;
     console.log(name, value);
@@ -65,7 +81,7 @@ console.log(formData)
   const sendTransaction = async () => {
     try {
       // const { addressTo, amount, keyword, message } = formData;
-       createEthereumContract();
+      createEthereumContract();
     } catch (error) {
       console.log(error);
     }
