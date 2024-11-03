@@ -16,7 +16,6 @@ const createEthereumContract = async () => {
     CONTRACT_ABI,
     signer
   );
-
   console.log({ provider, signer, transactionContract });
 };
 
