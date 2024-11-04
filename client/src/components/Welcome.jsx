@@ -1,8 +1,12 @@
 import { SiEthereum } from "react-icons/si";
 import { BsInfoCircle } from "react-icons/bs";
 import Input from "./Input";
+import { useState } from "react";
+import Loader from "./Loader";
 
 const Welcome = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const commonStyles =
     "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
   const connectWallet = async () => {};
@@ -12,9 +16,16 @@ const Welcome = () => {
     console.log(name, value);
   };
 
+  
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  };
   return (
-    <section className="flex w-full justify-center items-center">
-      <div className="flex md:flex-row flex-col justify-between items-start md:p-20 py-12 px-4">
+    <section className="flex flex-col lg:flex-row p-6 w-full justify-center items-center">
+      <div className="flex md:flex-row flex-col flex-1 justify-between items-start md:p-20 py-12 px-4">
         <div className="flex flex-1 justify-start flex-col md:mr-10">
           <h1 className="text-3xl sm:text-5xl py-1 text-white text-gradient">
             Send crypto <br /> across the world
@@ -40,7 +51,7 @@ const Welcome = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col flex-1 w-full items-center justify-start mt-10 md:mt-0">
+      <div className="flex  flex-col flex-1 w-full items-center justify-start mt-10 md:mt-0">
         <div className="p-3 flex justify-end items-start flex-col rounded-xl h-40 sm:w-72 w-full my-5 eth-card .white-glassmorphism">
           <div className="flex justify-between flex-col w-full h-full">
             <div className="flex justify-between items-start">
@@ -57,7 +68,7 @@ const Welcome = () => {
         </div>
 
         <form
-          className="p-5 sm:w-96 w-full blue-glassmorphism flex flex-col justify-start items-center  "
+          className="p-5 relative  sm:w-96 w-full blue-glassmorphism flex flex-col justify-start items-center  "
           action=""
         >
           <Input
@@ -84,9 +95,18 @@ const Welcome = () => {
             type="text"
             handleChange={handleChange}
           />
-          <div className="h-[1px] w-full bg-gray-400 my-2">
-            
-          </div>
+          <div className="h-[1px] w-full bg-gray-400 my-2"></div>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <button
+              onClick={handleSubmit}
+              type="button"
+              className="px-10 w-full mt-2 py-2 bg-blue-600 text-white  rounded-xl"
+            >
+              Send Now
+            </button>
+          )}
         </form>
       </div>
     </section>
