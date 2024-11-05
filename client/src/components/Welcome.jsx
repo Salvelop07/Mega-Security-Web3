@@ -1,28 +1,42 @@
 import { SiEthereum } from "react-icons/si";
 import { BsInfoCircle } from "react-icons/bs";
 import Input from "./Input";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Loader from "./Loader";
+import { TransactionContext } from "../../context/TransactionsContext";
 
 const Welcome = () => {
   const [isLoading, setIsLoading] = useState(false);
 
+  const {
+    connectWallet,
+    currentAccount,
+    sendTransaction,
+    handleChange,
+    formData,
+  } = useContext(TransactionContext);
+
   const commonStyles =
     "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
-  const connectWallet = async () => {};
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    console.log(name, value);
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  
-  const handleSubmit = async () => {
-    setIsLoading(true);
-    setTimeout(() => {
+    if (!formData) return console.log("no form data");
+
+    const { addressTo, amount, keyword, message } = formData;
+    if (!addressTo || !amount || !keyword || !message) return;
+
+    try {
+      setIsLoading(true);
+      sendTransaction();
+    } catch (error) {
+      console.error("Transaction failed:", error);
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
+
   return (
     <section className="flex flex-col lg:flex-row p-6 w-full justify-center items-center">
       <div className="flex md:flex-row flex-col flex-1 justify-between items-start md:p-20 py-12 px-4">
@@ -34,13 +48,15 @@ const Welcome = () => {
             Send digital assets globally with secure, fast, and decentralized
             transactions.
           </p>
-          <button
-            className="flex flex-row text-base font-semibold justify-center items-center my-5 bg-blue-600 text-white p-3 rounded-md "
-            type="button"
-            onClick={connectWallet}
-          >
-            Connect Wallet
-          </button>
+          {!currentAccount && (
+            <button
+              className="flex flex-row text-base font-semibold justify-center items-center my-5 bg-blue-600 text-white p-3 rounded-md "
+              type="button"
+              onClick={connectWallet}
+            >
+              Connect Wallet
+            </button>
+          )}
           <div className="grid sm:grid-cols-3 grid-cols-2 w-full mt-10">
             <div className={`rounded-tl-2xl ${commonStyles}`}>Reliability</div>
             <div className={commonStyles}>Security</div>
@@ -69,7 +85,7 @@ const Welcome = () => {
 
         <form
           className="p-5 relative  sm:w-96 w-full blue-glassmorphism flex flex-col justify-start items-center  "
-          action=""
+          onSubmit={handleSubmit}
         >
           <Input
             placeholder="Address To"
@@ -100,8 +116,7 @@ const Welcome = () => {
             <Loader />
           ) : (
             <button
-              onClick={handleSubmit}
-              type="button"
+              type="submit"
               className="px-10 w-full mt-2 py-2 bg-blue-600 text-white  rounded-xl"
             >
               Send Now
