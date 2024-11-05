@@ -2,7 +2,7 @@ import { useState } from "react";
 import logo from "../assets/images/logo.png";
 import { MdOutlineClose, MdOutlineMenu } from "react-icons/md";
 
-const NavBar = () => {
+export const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navItems = ["Marketplace", "Services", "Transactions", "Wallet"];
 
@@ -72,5 +72,4 @@ const NavBar = () => {
     </nav>
   );
 };
-
-export default NavBar;
+ 
