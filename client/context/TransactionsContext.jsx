@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { ethers } from "ethers";
+import { BrowserProvider, ethers } from "ethers";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../utils/constants";
 
 import { useEffect, useState, createContext } from "react";
@@ -9,17 +9,19 @@ const { ethereum } = window;
 
 const createEthereumContract = async () => {
   if (!ethereum) {
-    console.error("MetaMask is not installed!");
-    return;
+    console.log("MetaMask not installed; using read-only defaults");
+    provider = ethers.getDefaultProvider();
   }
+  let signer = null;
 
+  let provider;
   try {
     // Request account access from MetaMask
-    const provider = new ethers.BrowserProvider(ethereum);
+    provider = new BrowserProvider(ethereum);
     await provider.send("eth_requestAccounts", []);
 
     // Get the signer (active account)
-    const signer = await provider.getSigner();
+    signer = await provider.getSigner();
 
     // Initialize the contract instance
     const transactionContract = new ethers.Contract(
@@ -30,6 +32,8 @@ const createEthereumContract = async () => {
 
     console.log({ provider, signer, transactionContract });
     // return transactionContract; // Optional: Return contract instance if you need it outside the function
+
+    return transactionContract;
   } catch (error) {
     console.error("Error creating Ethereum contract:", error);
   }
@@ -80,8 +84,20 @@ export const TransactionsProvider = ({ children }) => {
   };
   const sendTransaction = async () => {
     try {
-      // const { addressTo, amount, keyword, message } = formData;
-      createEthereumContract();
+      const { addressTo, amount, keyword, message } = formData;
+      const transactionsContract = createEthereumContract();
+      const parsedAmount = ethers.utils.parseEther(amount);
+      await ethereum.request({
+        method: "eth_sendTransaction",
+        params: [
+          {
+            to: addressTo,
+            from: currentAccount,
+            gas: "0x5208", // 21000 gwei in hex format (gas limit)
+            value: parsedAmount.toHexString(), // Convert to hex string
+          },
+        ],
+      });
     } catch (error) {
       console.log(error);
     }
